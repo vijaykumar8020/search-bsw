@@ -1,9 +1,10 @@
-'use client';
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState } from "react";
 
 function ResultList({ items }: { items: any[] }) {
   return (
-    <ul className="grid gap-4">
+    <div style={{ maxWidth: 1200, margin: "40px auto" }}>
+    <ul style={{ display: "flex", listStyle: "none", gap: 16, flexWrap: "wrap", padding: 0, maxWidth: 1200, margin: "0 auto" }}>
       {items?.map((it) => (
         <li key={it.id} className="rounded-2xl border p-4 shadow-sm">
           <div className="font-semibold text-lg">{it.title ?? it.name}</div>
@@ -20,11 +21,12 @@ function ResultList({ items }: { items: any[] }) {
         </li>
       ))}
     </ul>
+    </div>
   );
 }
 
 export default function SearchPage() {
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState("");
   const [items, setItems] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -34,9 +36,9 @@ export default function SearchPage() {
     setIsLoading(true);
 
     // ✅ Local API route (this will serve either mock JSON or real API)
-    const res = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         q: keyphrase,
         offset: (pageNum - 1) * 10,
@@ -53,7 +55,7 @@ export default function SearchPage() {
   };
 
   useEffect(() => {
-    fetchResults('', 1);
+    fetchResults("", 1);
   }, []);
 
   useEffect(() => {
@@ -62,7 +64,7 @@ export default function SearchPage() {
   }, [q]);
 
   return (
-    <div className="container mx-auto p-6">
+    <div style={{ maxWidth: 1200, margin: "0 auto", marginTop:"20px" }}>
       <h1 className="text-2xl font-bold mb-4">Search</h1>
       <input
         value={q}
