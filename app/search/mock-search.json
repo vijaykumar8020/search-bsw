@@ -1,0 +1,49 @@
+{
+  "widgets": [
+    {
+      "content": [
+        {
+          "id": "1",
+          "title": "Headless CMS Best Practices",
+          "description": "Learn how to structure your Sitecore headless project.",
+          "image_url": "https://via.placeholder.com/300x150.png?text=Headless+CMS",
+          "category": "Guides"
+        },
+        {
+          "id": "2",
+          "title": "Next.js with Sitecore XM Cloud",
+          "description": "Integrating Next.js App Router with Sitecore XM Cloud.",
+          "image_url": "https://via.placeholder.com/300x150.png?text=Next.js+XM+Cloud",
+          "category": "Tutorials"
+        },
+        {
+          "id": "3",
+          "title": "DevOps for Sitecore",
+          "description": "Setting up CI/CD pipelines for Sitecore XM Cloud.",
+          "image_url": "https://via.placeholder.com/300x150.png?text=DevOps",
+          "category": "DevOps"
+        }
+      ],
+      "total_item": 3,
+      "facets": [
+        {
+          "name": "category",
+          "values": [
+            {
+              "value": "Guides",
+              "count": 1
+            },
+            {
+              "value": "Tutorials",
+              "count": 1
+            },
+            {
+              "value": "DevOps",
+              "count": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
