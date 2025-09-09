@@ -1,105 +1,66 @@
-"use client";
-import { useEffect, useState } from "react";
+import { getLocations } from "../api/search/getLocations";
+import SearchBox from "./SearchBox";
 
-function ResultList({ items }: { items: any[] }) {
-  return (
-    <div style={{ maxWidth: 1200, margin: "40px auto" }}>
-    <ul style={{ display: "flex", listStyle: "none", gap: 16, flexWrap: "wrap", padding: 0, maxWidth: 1200, margin: "0 auto" }}>
-      {items?.map((it) => (
-        <li key={it.id} className="rounded-2xl border p-4 shadow-sm">
-          <div className="font-semibold text-lg">{it.title ?? it.name}</div>
-          {it.description && (
-            <p className="text-sm opacity-80 mt-1">{it.description}</p>
-          )}
-          {it.image_url && (
-            <img
-              src={it.image_url}
-              alt={it.title ?? it.name}
-              className="mt-3 rounded-xl"
-            />
-          )}
-        </li>
-      ))}
-    </ul>
-    </div>
-  );
-}
+export default async function SearchPage() {
+  const data = await getLocations({
+    city: "Dallas",
+    radius: 10,
+  });
 
-export default function SearchPage() {
-  const [q, setQ] = useState("");
-  const [items, setItems] = useState<any[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const locations = data?.locationResults || [];
 
-  const fetchResults = async (keyphrase: string, pageNum = 1) => {
-    setIsLoading(true);
-
-    // ✅ Local API route (this will serve either mock JSON or real API)
-    const res = await fetch("/api/search", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        q: keyphrase,
-        offset: (pageNum - 1) * 10,
-        limit: 10,
-      }),
-    });
-
-    const data = await res.json();
-    const content = data?.widgets?.[0]?.content ?? [];
-
-    setItems(content);
-    setTotal(data?.widgets?.[0]?.total_item ?? content.length);
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    fetchResults("", 1);
-  }, []);
-
-  useEffect(() => {
-    const t = setTimeout(() => fetchResults(q, 1), 300);
-    return () => clearTimeout(t);
-  }, [q]);
+  console.log("Fetched locations:", data);
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto", marginTop:"20px" }}>
-      <h1 className="text-2xl font-bold mb-4">Search</h1>
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder="Search..."
-        className="w-full rounded-xl border px-4 py-2 mb-6"
-      />
-      {isLoading ? <div>Loading…</div> : <ResultList items={items} />}
-      {total > 10 && (
-        <div className="flex gap-2 mt-6">
-          <button
-            onClick={() => {
-              const p = Math.max(1, page - 1);
-              setPage(p);
-              fetchResults(q, p);
-            }}
-            disabled={page === 1}
-            className="border rounded px-3 py-1"
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">
+        Suggested locations near Dallas, TX
+      </h1>
+
+      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+      <SearchBox />
+
+      <div className="grid md:grid-cols-3 gap-4">
+        {locations.map((loc: any, idx: number) => (
+          <div
+            key={idx}
+            className="rounded-xl border p-4 shadow hover:shadow-lg transition"
           >
-            Prev
-          </button>
-          <span>Page {page}</span>
-          <button
-            onClick={() => {
-              const p = page + 1;
-              setPage(p);
-              fetchResults(q, p);
-            }}
-            disabled={page * 10 >= total}
-            className="border rounded px-3 py-1"
-          >
-            Next
-          </button>
-        </div>
-      )}
+            <h2 className="font-semibold text-lg">{loc.locationName}</h2>
+            <p className="text-sm text-gray-600">{loc.locationType}</p>
+
+            <p className="mt-2 text-sm">
+              📍 {loc.locationStreet}, {loc.locationCity}, {loc.locationState}{" "}
+              {loc.locationZip}
+            </p>
+
+            {loc.locationPhone && (
+              <p className="mt-2 text-sm">📞 {loc.locationPhone}</p>
+            )}
+
+            <p className="mt-2 text-sm">
+              {loc.allowWalkIns
+                ? "✅ Accepting Walk-Ins"
+                : "🚫 Not Accepting Walk-Ins"}
+            </p>
+
+            {loc.openNowMessage && (
+              <p className="mt-2 text-sm">⏰ {loc.openNowMessage}</p>
+            )}
+
+            {loc.locationUrl && (
+              <a
+                href={loc.locationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline text-sm mt-2 inline-block"
+              >
+                View Location →
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
